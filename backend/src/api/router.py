@@ -6,7 +6,7 @@ from ..models.task import Task, TaskCreate, TaskUpdate, TaskRead
 from ..services.task_service import TaskService
 from ..models.user import User, UserRegister, UserLogin, UserPublic
 from ..services.user_service import UserService
-from ..auth.security import create_access_token, authenticate_user
+from ..auth.security import create_access_token, get_current_user_from_header
 from datetime import timedelta
 import os
 
@@ -61,7 +61,7 @@ def login_user(
     Returns:
         Access token and user information
     """
-    user = authenticate_user(session, user_credentials.email, user_credentials.password)
+    user = UserService.authenticate_user(session, user_credentials.email, user_credentials.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -88,7 +88,7 @@ def login_user(
 
 @router.get("/auth/me", response_model=UserPublic)
 def get_current_user(
-    current_user: User = Depends(authenticate_user)
+    current_user: User = Depends(get_current_user_from_header)
 ):
     """
     Get information about the currently authenticated user.
@@ -105,7 +105,7 @@ def get_current_user(
 # Protected task endpoints (require authentication)
 @router.get("/tasks", response_model=List[TaskRead])
 def get_tasks(
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     completed: Optional[bool] = None,
     session: Session = Depends(get_session)
 ):
@@ -127,7 +127,7 @@ def get_tasks(
 @router.post("/tasks", response_model=TaskRead, status_code=201)
 def create_task(
     task_data: TaskCreate,
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     session: Session = Depends(get_session)
 ):
     """
@@ -152,7 +152,7 @@ def create_task(
 @router.get("/tasks/{task_id}", response_model=TaskRead)
 def get_task(
     task_id: int,
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     session: Session = Depends(get_session)
 ):
     """
@@ -176,7 +176,7 @@ def get_task(
 def update_task(
     task_id: int,
     task_update: TaskUpdate,
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     session: Session = Depends(get_session)
 ):
     """
@@ -200,7 +200,7 @@ def update_task(
 @router.delete("/tasks/{task_id}")
 def delete_task(
     task_id: int,
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     session: Session = Depends(get_session)
 ):
     """
@@ -224,7 +224,7 @@ def delete_task(
 def update_task_completion(
     task_id: int,
     completed: bool,
-    current_user: User = Depends(authenticate_user),
+    current_user: User = Depends(get_current_user_from_header),
     session: Session = Depends(get_session)
 ):
     """

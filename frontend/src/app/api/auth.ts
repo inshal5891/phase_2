@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Task, TaskUpdateRequest } from '../../../shared/types';
 
 // Base API URL from environment - defaults to backend on port 8000 during development
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
@@ -64,14 +63,6 @@ export interface UserData {
   is_active: boolean;
   email_verified: boolean;
   created_at: string; // ISO date string
-}
-
-/**
- * Interface for task creation request (without user_id, which is derived from JWT)
- */
-export interface TaskCreateRequest {
-  title: string;
-  description?: string;
 }
 
 /**
@@ -152,89 +143,4 @@ export const isAuthenticated = (): boolean => {
  */
 export const getAccessToken = (): string | null => {
   return localStorage.getItem('access_token');
-};
-
-/**
- * Fetch all tasks for the authenticated user
- */
-export const fetchTasks = async (completed?: boolean): Promise<Task[]> => {
-  try {
-    const params: { completed?: boolean } = {};
-    if (completed !== undefined) {
-      params.completed = completed;
-    }
-
-    const response = await api.get<Task[]>('/tasks', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-    throw error;
-  }
-};
-
-/**
- * Create a new task
- */
-export const createTask = async (taskData: { title: string; description?: string }): Promise<Task> => {
-  try {
-    const response = await api.post<Task>('/tasks', taskData);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating task:', error);
-    throw error;
-  }
-};
-
-/**
- * Fetch a specific task by ID
- */
-export const fetchTaskById = async (taskId: number): Promise<Task> => {
-  try {
-    const response = await api.get<Task>(`/tasks/${taskId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching task by ID:', error);
-    throw error;
-  }
-};
-
-/**
- * Update a task
- */
-export const updateTask = async (taskId: number, taskData: TaskUpdateRequest): Promise<Task> => {
-  try {
-    const response = await api.put<Task>(`/tasks/${taskId}`, taskData);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating task:', error);
-    throw error;
-  }
-};
-
-/**
- * Delete a task
- */
-export const deleteTask = async (taskId: number): Promise<void> => {
-  try {
-    await api.delete(`/tasks/${taskId}`);
-  } catch (error) {
-    console.error('Error deleting task:', error);
-    throw error;
-  }
-};
-
-/**
- * Toggle task completion status
- */
-export const toggleTaskCompletion = async (taskId: number, completed: boolean): Promise<Task> => {
-  try {
-    const response = await api.patch<Task>(
-      `/tasks/${taskId}/complete`,
-      { completed }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error toggling task completion:', error);
-    throw error;
-  }
 };

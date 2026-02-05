@@ -40,3 +40,16 @@ class TaskRead(TaskBase):
     id: int
     created_at: datetime
     user: Optional["User"] = None
+
+    @classmethod
+    def from_orm(cls, obj):
+        """Convert from ORM object to Pydantic model."""
+        return cls(
+            title=obj.title,
+            description=obj.description,
+            completed=obj.completed,
+            user_id=obj.user_id,
+            id=obj.id,
+            created_at=obj.created_at,
+            user=obj.user
+        )

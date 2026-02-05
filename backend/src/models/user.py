@@ -62,3 +62,14 @@ class UserPublic(UserBase):
     is_active: bool
     email_verified: bool
     created_at: datetime
+
+    @classmethod
+    def from_orm(cls, obj):
+        """Convert from ORM object to Pydantic model."""
+        return cls(
+            email=obj.email,
+            id=obj.id,
+            is_active=obj.is_active,
+            email_verified=obj.email_verified,
+            created_at=obj.created_at
+        )

@@ -1,127 +1,185 @@
-# Todo Web Application
+# Phase II - Todo Web Application: Integration, Hardening & Production Readiness
 
-A full-stack todo web application built with Next.js, FastAPI, SQLModel, and Neon Serverless PostgreSQL.
+This repository contains a full-stack todo web application with authentication and secure API access, representing Phase II of the project. The application has been integrated, hardened, and prepared for production readiness.
 
 ## Features
 
-- Create, read, update, and delete todo tasks
-- Filter tasks by completion status (all, completed, pending)
-- Persistent storage in PostgreSQL database
-- Responsive web interface
-- RESTful API endpoints
+- **Full-Stack Todo Application**: Complete CRUD functionality for todo items
+- **User Authentication**: Secure signup and login with JWT tokens
+- **Data Isolation**: Each user can only access their own tasks
+- **Responsive UI**: Modern web interface built with Next.js
+- **RESTful API**: Well-designed API endpoints with proper HTTP status codes
+- **Database Integration**: Neon Serverless PostgreSQL with SQLModel ORM
 
-## Tech Stack
+## Architecture
 
-- **Frontend**: Next.js 16+ (App Router), TypeScript, React
+### Tech Stack
+- **Frontend**: Next.js 16+ (App Router), TypeScript, Tailwind CSS
 - **Backend**: FastAPI, Python 3.12
-- **ORM**: SQLModel
-- **Database**: Neon Serverless PostgreSQL
-- **API**: REST with automatic OpenAPI documentation
+- **Database**: Neon Serverless PostgreSQL with SQLModel ORM
+- **Authentication**: JWT-based with custom security implementation
+- **State Management**: React Context for authentication state
 
-## Project Structure
-
+### System Flow
 ```
-├── backend/
-│   ├── src/
-│   │   ├── models/          # SQLModel definitions
-│   │   ├── services/        # Business logic
-│   │   ├── api/            # API routes
-│   │   ├── database/       # Database session management
-│   │   └── main.py         # Main application entry point
-│   ├── requirements.txt
-│   └── .env
-├── frontend/
-│   ├── src/
-│   │   ├── app/            # Next.js App Router pages
-│   │   ├── components/     # React components
-│   │   └── api/           # API service functions
-│   ├── package.json
-│   ├── next.config.js
-│   └── .env.local
-├── shared/
-│   └── types/             # Shared TypeScript definitions
-└── specs/
-    └── 001-fullstack-todo-app/  # Project specifications
+User → Frontend (Auth + UI) → JWT → FastAPI Middleware → Service Layer → DB → Response → UI
 ```
 
-## Setup Instructions
+## Environment Configuration
+
+### Backend Configuration
+
+Copy `.env.example` to `.env` and set your environment variables:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Configure the following variables:
+- `DATABASE_URL`: PostgreSQL connection string
+- `BETTER_AUTH_SECRET`: Secret key for JWT signing (change for production)
+- `ACCESS_TOKEN_EXPIRE_MINUTES`: Token expiration time (default: 30)
+- `APP_ENV`: Environment (development/production)
+- `DEBUG`: Enable/disable debug mode
+
+### Frontend Configuration
+
+Copy `.env.local.example` to `.env.local` and set your environment variables:
+
+```bash
+cp frontend/.env.local.example frontend/.env.local
+```
+
+Configure the following variables:
+- `NEXT_PUBLIC_API_BASE_URL`: Backend API URL (default: http://localhost:8000/api)
+
+## Getting Started
+
+### Prerequisites
+- Python 3.12+
+- Node.js 18+
+- npm or yarn
+- Neon Serverless PostgreSQL account
 
 ### Backend Setup
 
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
+1. Navigate to backend directory:
+   ```bash
+   cd backend
+   ```
 
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+2. Create virtual environment and install dependencies:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
 
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+3. Configure environment variables (see above)
 
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your database connection string
-```
-
-5. Start the backend server:
-```bash
-cd src
-uvicorn main:app --reload
-```
-The backend will be available at `http://localhost:8000`
+4. Start the backend server:
+   ```bash
+   uvicorn src.main:app --reload
+   ```
 
 ### Frontend Setup
 
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
+1. Navigate to frontend directory:
+   ```bash
+   cd frontend
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-3. Set up environment variables:
-```bash
-cp .env.local.example .env.local
-# Edit .env.local with your backend API URL
-```
+3. Configure environment variables (see above)
 
 4. Start the frontend development server:
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
-The frontend will be available at `http://localhost:3000`
+## Security Features
+
+- **JWT Token Authentication**: All API endpoints require valid JWT tokens
+- **User Data Isolation**: Each user can only access their own tasks
+- **Secure Token Storage**: JWT tokens stored securely in browser's localStorage
+- **Automatic Expiration**: Tokens automatically expire after configured time
+- **Proper Error Handling**: Consistent error responses with appropriate status codes
 
 ## API Endpoints
 
-The application exposes the following REST API endpoints:
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user info
 
-- `GET /api/tasks` - Get all tasks for a user
-- `POST /api/tasks` - Create a new task
-- `GET /api/tasks/{id}` - Get a specific task
-- `PUT /api/tasks/{id}` - Update a task
-- `DELETE /api/tasks/{id}` - Delete a task
-- `PATCH /api/tasks/{id}/complete` - Toggle task completion status
+### Tasks
+- `GET /api/tasks` - Get user's tasks
+- `POST /api/tasks` - Create new task
+- `GET /api/tasks/{id}` - Get specific task
+- `PUT /api/tasks/{id}` - Update task
+- `DELETE /api/tasks/{id}` - Delete task
+- `PATCH /api/tasks/{id}/complete` - Update completion status
 
-View the full API documentation at `http://localhost:8000/docs` when the backend is running.
+## User Flows
 
-## Development
+### Complete End-to-End Flow
+1. User signs up for an account
+2. User logs in and receives JWT token
+3. User can create, read, update, and delete their tasks
+4. User can log out, clearing their session
 
-- Backend API documentation is automatically generated at `/docs`
-- Frontend uses TypeScript with shared type definitions
-- All database operations use SQLModel for type safety
-- Frontend communicates with backend via API service functions
+### Error Handling
+- Invalid credentials show clear error messages
+- Expired tokens redirect to login page
+- Unauthorized access to protected resources redirects to login
+- All error states are handled gracefully with user feedback
 
-## Acknowledgements
+## Development Workflow
 
-Built with Claude Code's agentic development workflow.
+This project follows an agentic development approach:
+- **Specification Phase** (`/sp.specify`): Define requirements and user stories
+- **Planning Phase** (`/sp.plan`): Create technical architecture and data models
+- **Task Breakdown Phase** (`/sp.tasks`): Split implementation into testable tasks
+- **Implementation Phase** (`/sp.implement`): Execute tasks and build features
+
+## Running Tests
+
+Backend tests:
+```bash
+cd backend
+pytest
+```
+
+## Production Deployment
+
+For production deployment:
+1. Use secure values for all environment variables
+2. Set `APP_ENV=production` and `DEBUG=False`
+3. Configure SSL for HTTPS
+4. Implement proper logging
+5. Set up monitoring and alerting
+
+## Development Notes
+
+This project was built using an agent-driven development approach following the Spec-Kit methodology:
+- Specification (spec) → Planning (plan) → Tasks (tasks) → Implementation (implement)
+
+The implementation is divided into phases:
+- Phase 1: Core full-stack todo application
+- Phase 2: Authentication and secure API access
+- Phase 3: Integration, hardening, and production readiness (current phase)
+
+## Troubleshooting
+
+### Common Issues
+- **Database Connection**: Ensure your Neon PostgreSQL connection string is correct
+- **JWT Secret**: Make sure the same secret is used in both backend and any frontend validation
+- **CORS**: Check if your frontend domain is allowed in the backend CORS settings
+- **Environment Variables**: Verify all environment variables are set correctly
+
+### API Documentation
+The backend includes automatic API documentation at `/docs` when running in development mode.

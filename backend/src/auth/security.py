@@ -70,10 +70,8 @@ def authenticate_user(session: Session, email: str, password: str) -> Optional[U
     Returns:
         User object if authentication successful, None otherwise
     """
-    user = session.query(User).filter(User.email == email).first()
-    if not user or not verify_password(password, user.hashed_password):
-        return None
-    return user
+    from ..services.user_service import UserService
+    return UserService.authenticate_user(session, email, password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -124,17 +122,39 @@ async def get_current_user(
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        if username is None:
+        user_id: int = payload.get("user_id")
+
+        if username is None or user_id is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+
+        # Verify the user still exists in the database
+        user = session.get(User, user_id)
+        if user is None or user.email != username or not user.is_active:
+            raise credentials_exception
+
+        return user
     except JWTError:
         raise credentials_exception
 
-    user = session.query(User).filter(User.email == token_data.username).first()
-    if user is None:
-        raise credentials_exception
 
-    return user
+async def get_current_user_from_header(
+    credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
+    session: Session = Depends(get_session)
+) -> User:
+    """
+    Get current user from Authorization header (alternative method for dependency injection).
+
+    Args:
+        credentials: HTTP authorization credentials containing the token
+        session: Database session
+
+    Returns:
+        User object for the authenticated user
+
+    Raises:
+        HTTPException: If token is invalid, expired, or user doesn't exist
+    """
+    return await get_current_user(credentials, session)
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:

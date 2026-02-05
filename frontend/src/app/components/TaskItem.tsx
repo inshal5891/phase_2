@@ -1,167 +1,134 @@
-'use client';
-
-import React, { useState } from 'react';
-import { Task, TaskUpdateRequest } from '../../../../shared/types';
-import { updateTask, deleteTask, toggleTaskCompletion } from '../api/tasks';
+import { useState } from 'react';
+import { Task } from '../../types';
 
 interface TaskItemProps {
   task: Task;
-  onUpdate: (updatedTask: Task) => void;
-  onDelete: (taskId: number) => void;
-  userId: number;
+  onToggle: (id: number, completed: boolean) => void;
+  onEdit: (task: Task) => void;
+  onDelete: (id: number) => void;
+  isLoading?: boolean;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onUpdate, onDelete, userId }) => {
+export default function TaskItem({ task, onToggle, onEdit, onDelete, isLoading }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description || '');
-  const [isLoading, setIsLoading] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
+  const [editDescription, setEditDescription] = useState(task.description || '');
 
-  const handleToggleComplete = async () => {
-    setIsLoading(true);
-    try {
-      const updatedTask = await toggleTaskCompletion(task.id, userId, !task.completed);
-      onUpdate(updatedTask);
-    } catch (error) {
-      console.error('Error toggling task completion:', error);
-    } finally {
-      setIsLoading(false);
+  const handleSaveEdit = () => {
+    // Validation
+    if (!editTitle.trim()) {
+      alert('Title is required');
+      return;
     }
-  };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-    setTitle(task.title);
-    setDescription(task.description || '');
-  };
-
-  const handleSave = async () => {
-    setIsLoading(true);
-    try {
-      const updateData: TaskUpdateRequest = {
-        title,
-        description: description || undefined,
-      };
-
-      const updatedTask = await updateTask(task.id, userId, updateData);
-      onUpdate(updatedTask);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating task:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
+    // Call parent onEdit with updated task data
+    onEdit({ ...task, title: editTitle.trim(), description: editDescription.trim() });
     setIsEditing(false);
-    setTitle(task.title);
-    setDescription(task.description || '');
   };
 
-  const handleDelete = async () => {
-    if (window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
-      setIsLoading(true);
-      try {
-        await deleteTask(task.id, userId);
-        onDelete(task.id);
-      } catch (error) {
-        console.error('Error deleting task:', error);
-      } finally {
-        setIsLoading(false);
-      }
+  const handleCancelEdit = () => {
+    // Reset to original values
+    setEditTitle(task.title);
+    setEditDescription(task.description || '');
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSaveEdit();
+    } else if (e.key === 'Escape') {
+      handleCancelEdit();
     }
   };
 
   return (
-    <div className={`p-4 mb-2 rounded-lg shadow ${
-      task.completed ? 'bg-green-50 border-l-4 border-green-500' : 'bg-white border-l-4 border-blue-500'
-    }`}>
-      <div className="flex items-start">
-        <input
-          type="checkbox"
-          checked={task.completed}
-          onChange={handleToggleComplete}
-          disabled={isLoading}
-          className="mt-1 mr-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-        />
-
-        {isEditing ? (
-          <div className="flex-1">
+    <li className={`p-4 mb-2 ${task.completed ? 'bg-green-50' : 'bg-white'} shadow rounded-lg`}>
+      {isEditing ? (
+        <div className="space-y-3">
+          <div>
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-2 border rounded mb-2"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isLoading}
+              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
               placeholder="Task title"
+              autoFocus
             />
+          </div>
+          <div>
             <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2 border rounded"
-              placeholder="Task description (optional)"
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isLoading}
               rows={2}
+              className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
+              placeholder="Task description (optional)"
             />
-            <div className="flex mt-2 space-x-2">
-              <button
-                onClick={handleSave}
-                disabled={isLoading}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                disabled={isLoading}
-                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
-              >
-                Cancel
-              </button>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleSaveEdit}
+              disabled={isLoading}
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              disabled={isLoading}
+              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-start">
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={(e) => onToggle(task.id, e.target.checked)}
+              disabled={isLoading}
+              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-1"
+            />
+            <div className="ml-3 flex-1 min-w-0">
+              <p className={`text-sm font-medium ${task.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                {task.title}
+              </p>
+              {task.description && (
+                <p className={`text-sm ${task.completed ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                  {task.description}
+                </p>
+              )}
+              <p className="text-xs text-gray-400 mt-1">
+                Created: {new Date(task.created_at).toLocaleDateString()}
+              </p>
             </div>
           </div>
-        ) : (
-          <div className="flex-1">
-            <h3 className={`text-lg ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-              {task.title}
-            </h3>
-            {task.description && (
-              <p className={`mt-1 ${task.completed ? 'line-through text-gray-500' : 'text-gray-600'}`}>
-                {task.description}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-2">
-              Created: {new Date(task.created_at).toLocaleString()}
-            </p>
-          </div>
-        )}
 
-        <div className="flex space-x-2 ml-4">
-          {!isEditing && (
+          <div className="flex justify-end space-x-2 mt-2">
             <button
-              onClick={handleEdit}
+              onClick={() => setIsEditing(true)}
               disabled={isLoading}
-              className="p-2 text-blue-500 hover:text-blue-700 disabled:opacity-50"
-              title="Edit task"
+              className="inline-flex items-center p-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-              </svg>
+              Edit
             </button>
-          )}
-          <button
-            onClick={handleDelete}
-            disabled={isLoading}
-            className="p-2 text-red-500 hover:text-red-700 disabled:opacity-50"
-            title="Delete task"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
+            <button
+              onClick={() => onDelete(task.id)}
+              disabled={isLoading}
+              className="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+            >
+              Delete
+            </button>
+          </div>
+        </>
+      )}
+    </li>
   );
-};
-
-export default TaskItem;
+}

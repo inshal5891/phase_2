@@ -793,6 +793,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 - Neon Serverless PostgreSQL via SQLModel ORM (001-fullstack-todo-app)
 - Python 3.12, TypeScript/JavaScript for Next.js, SQL for PostgreSQL + Next.js 16+ (App Router) with Better Auth, FastAPI with JWT verification middleware, SQLModel, Neon Serverless PostgreSQL, python-jose for JWT handling, bcrypt for password hashing (002-auth-secure-api)
 - Neon Serverless PostgreSQL via SQLModel ORM (existing from Spec 1) (002-auth-secure-api)
+- Python 3.12, TypeScript 5.0, Next.js 16+ (App Router) + FastAPI, SQLModel, Neon Serverless PostgreSQL, Better Auth (JWT), React 19, Tailwind CSS (003-integration-hardening)
+- Neon Serverless PostgreSQL with SQLModel ORM (003-integration-hardening)
 
 ## Recent Changes
 - 001-fullstack-todo-app: Added Python 3.12, TypeScript/JavaScript for Next.js, SQL for PostgreSQL + Next.js 16+ (App Router), FastAPI, SQLModel, Neon Serverless PostgreSQL, uvicorn

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/create-phr.sh:*)",
+      "Bash(git fetch:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh --json \"/sp.specify Phase II — Spec 3: Integration, Hardening & Production Readiness\n\nTarget audience:\nHackathon judges and reviewers evaluating system completeness and robustness\n\nFocus:\nStabilize, integrate, and harden the authenticated full-stack todo application for review and demonstration.\n\nSuccess criteria:\n- Frontend, backend, auth, and database fully integrated\n- All API endpoints behave correctly under valid and invalid auth\n- Proper error handling and status codes \\(401, 404, 400\\)\n- Environment configuration documented and reproducible\n- Application is demo-ready and reviewable\n\nConstraints:\n- No new features added\n- Reuse existing CRUD and auth logic\n- Environment-based configuration only\n- Agentic Dev Stack workflow only \\(no manual coding\\)\n\nValidation scope:\n- End-to-end user flows \\(signup → login → CRUD\\)\n- JWT expiry and unauthorized access handling\n- Task ownership enforcement\n- UI error states and loading states\n\nNot building:\n- Load testing or performance optimization\n- CI/CD pipelines\n- Advanced security features\" --number 3 --short-name \"integration-hardening\")",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh claude:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(echo:*)"
+    ]
+  }
+}
