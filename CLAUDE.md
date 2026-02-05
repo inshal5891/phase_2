@@ -791,6 +791,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 ## Active Technologies
 - Python 3.12, TypeScript/JavaScript for Next.js, SQL for PostgreSQL + Next.js 16+ (App Router), FastAPI, SQLModel, Neon Serverless PostgreSQL, uvicorn (001-fullstack-todo-app)
 - Neon Serverless PostgreSQL via SQLModel ORM (001-fullstack-todo-app)
+- Python 3.12, TypeScript/JavaScript for Next.js, SQL for PostgreSQL + Next.js 16+ (App Router) with Better Auth, FastAPI with JWT verification middleware, SQLModel, Neon Serverless PostgreSQL, python-jose for JWT handling, bcrypt for password hashing (002-auth-secure-api)
+- Neon Serverless PostgreSQL via SQLModel ORM (existing from Spec 1) (002-auth-secure-api)
 
 ## Recent Changes
 - 001-fullstack-todo-app: Added Python 3.12, TypeScript/JavaScript for Next.js, SQL for PostgreSQL + Next.js 16+ (App Router), FastAPI, SQLModel, Neon Serverless PostgreSQL, uvicorn

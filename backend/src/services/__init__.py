@@ -1,3 +1,3 @@
-from . import task_service
+from . import task_service, user_service
 
-__all__ = ["task_service"]
+__all__ = ["task_service", "user_service"]

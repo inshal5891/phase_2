@@ -1,7 +1,8 @@
-from sqlmodel import Field
+from sqlmodel import Field, Relationship
 from .sqlmodel_base import SQLModel
 from typing import Optional
 from datetime import datetime
+from .task import Task
 
 class UserBase(SQLModel):
     email: str = Field(unique=True, nullable=False)
@@ -9,20 +10,55 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     """
-    User entity representing a logical user context for organizing tasks.
-    Note: Authentication/authorization is deferred to Spec 2;
-    currently only used for data isolation.
+    User entity representing a registered user with authentication-specific fields
+    in addition to the original user context from Spec 1.
     """
     id: Optional[int] = Field(default=None, primary_key=True)
+    hashed_password: str = Field(nullable=False)  # BCrypt hashed password
+    is_active: bool = Field(default=True)  # Account status flag
+    email_verified: bool = Field(default=False)  # Email verification status
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    last_login: Optional[datetime] = Field(default=None)  # Timestamp of last successful login
+
+    # Relationship to tasks
+    tasks: list["Task"] = Relationship(back_populates="user")
 
 
 class UserCreate(UserBase):
     """Schema for creating a new user."""
-    pass
+    password: str
+
+
+class UserRegister(UserBase):
+    """Schema for user registration."""
+    password: str
+
+
+class UserLogin(SQLModel):
+    """Schema for user login."""
+    email: str
+    password: str
 
 
 class UserRead(UserBase):
     """Schema for reading user data without sensitive information."""
     id: int
+    is_active: bool
+    email_verified: bool
+    created_at: datetime
+    last_login: Optional[datetime]
+
+
+class UserUpdate(SQLModel):
+    """Schema for updating user information."""
+    email: Optional[str] = None
+    is_active: Optional[bool] = None
+    email_verified: Optional[bool] = None
+
+
+class UserPublic(UserBase):
+    """Public representation of user (without sensitive data)."""
+    id: int
+    is_active: bool
+    email_verified: bool
     created_at: datetime

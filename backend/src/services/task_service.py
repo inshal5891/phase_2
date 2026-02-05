@@ -8,9 +8,30 @@ class TaskService:
     """Service class for handling task-related business logic."""
 
     @staticmethod
+    def create_task_for_user(session: Session, task_data: TaskCreate, user_id: int) -> Task:
+        """
+        Create a new task for a specific user.
+
+        Args:
+            session: Database session
+            task_data: Task creation data
+            user_id: ID of the user who will own the task
+
+        Returns:
+            The created Task object
+        """
+        # Create task with the provided data and assign to user
+        task = Task.from_orm(task_data)
+        task.user_id = user_id
+        session.add(task)
+        session.commit()
+        session.refresh(task)
+        return task
+
+    @staticmethod
     def create_task(session: Session, task_data: TaskCreate) -> Task:
         """
-        Create a new task in the database.
+        Create a new task in the database (original method, kept for backward compatibility).
 
         Args:
             session: Database session
