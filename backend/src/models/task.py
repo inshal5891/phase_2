@@ -1,8 +1,10 @@
 from sqlmodel import Field, Relationship
 from .sqlmodel_base import SQLModel
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from .user import User
+
+if TYPE_CHECKING:
+    from .user import User
 
 class TaskBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
@@ -20,7 +22,7 @@ class Task(TaskBase, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationship to user
-    user: Optional[User] = Relationship(back_populates="tasks")
+    user: Optional["User"] = Relationship(back_populates="tasks")
 
 
 class TaskCreate(TaskBase):

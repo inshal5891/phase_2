@@ -1,8 +1,10 @@
 from sqlmodel import Field, Relationship
 from .sqlmodel_base import SQLModel
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from .task import Task
+
+if TYPE_CHECKING:
+    from .task import Task
 
 class UserBase(SQLModel):
     email: str = Field(unique=True, nullable=False)
