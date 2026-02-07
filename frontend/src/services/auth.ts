@@ -1,4 +1,4 @@
-import api from '../../lib/api';
+import api from '../lib/api';
 
 /**
  * Interface for user registration data
