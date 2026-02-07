@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TaskFormData } from '../../../shared/types';
+import { TaskFormData } from '../../types';
 
 interface TaskFormProps {
   onCreateTask: (taskData: TaskFormData) => void;
