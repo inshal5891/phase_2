@@ -76,8 +76,7 @@ export const deleteTask = async (taskId: number): Promise<void> => {
 export const toggleTaskCompletion = async (taskId: number, completed: boolean): Promise<Task> => {
   try {
     const response = await api.patch<Task>(
-      `/tasks/${taskId}/complete`,
-      { completed }
+      `/tasks/${taskId}/complete?completed=${completed}`
     );
     return response.data;
   } catch (error) {
