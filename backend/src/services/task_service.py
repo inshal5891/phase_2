@@ -21,8 +21,12 @@ class TaskService:
             The created Task object
         """
         # Create task with the provided data and assign to user
-        task = Task.from_orm(task_data)
-        task.user_id = user_id
+        task = Task(
+            title=task_data.title,
+            description=task_data.description,
+            completed=task_data.completed,
+            user_id=user_id
+        )
         session.add(task)
         session.commit()
         session.refresh(task)

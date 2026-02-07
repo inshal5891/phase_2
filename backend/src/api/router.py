@@ -103,7 +103,7 @@ def get_current_user(
 
 
 # Protected task endpoints (require authentication)
-@router.get("/tasks", response_model=List[TaskRead])
+@router.get("/tasks")
 def get_tasks(
     current_user: User = Depends(get_current_user_from_header),
     completed: Optional[bool] = None,
@@ -121,7 +121,18 @@ def get_tasks(
         List of Task objects for the authenticated user
     """
     tasks = TaskService.get_tasks_by_user(session, current_user.id, completed)
-    return tasks
+    # Return as dictionaries to bypass Pydantic serialization issues
+    return [
+        {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "completed": task.completed,
+            "user_id": task.user_id,
+            "created_at": task.created_at.isoformat()
+        }
+        for task in tasks
+    ]
 
 
 @router.post("/tasks", response_model=TaskRead, status_code=201)

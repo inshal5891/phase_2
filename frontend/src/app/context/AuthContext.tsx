@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserData, getCurrentUser } from '../api/tasks';
+import { UserData, getCurrentUser } from '../../services/tasks';
 
 interface AuthContextType {
   user: UserData | null;

@@ -25,9 +25,11 @@ class Task(TaskBase, table=True):
     user: Optional["User"] = Relationship(back_populates="tasks")
 
 
-class TaskCreate(TaskBase):
-    """Schema for creating a new task."""
-    pass
+class TaskCreate(SQLModel):
+    """Schema for creating a new task. user_id is extracted from JWT token."""
+    title: str = Field(min_length=1, max_length=255)
+    description: Optional[str] = Field(default=None, max_length=1000)
+    completed: bool = Field(default=False)
 
 
 class TaskUpdate(SQLModel):
@@ -41,17 +43,3 @@ class TaskRead(TaskBase):
     """Schema for reading task data."""
     id: int
     created_at: datetime
-    user: Optional["User"] = None
-
-    @classmethod
-    def from_orm(cls, obj):
-        """Convert from ORM object to Pydantic model."""
-        return cls(
-            title=obj.title,
-            description=obj.description,
-            completed=obj.completed,
-            user_id=obj.user_id,
-            id=obj.id,
-            created_at=obj.created_at,
-            user=obj.user
-        )

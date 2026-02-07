@@ -14,7 +14,7 @@ from ..models.user import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Initialize JWT settings
-SECRET_KEY = os.getenv("BETTER_AUTH_SECRET", "your-default-secret-key-change-in-production")
+SECRET_KEY = os.getenv("BETTER_AUTH_SECRET", "")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 

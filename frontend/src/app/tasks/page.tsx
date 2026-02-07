@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Task } from '../../types';
-import { fetchTasks, createTask, updateTask, deleteTask, toggleTaskCompletion } from '../api/tasks';
+import { fetchTasks, createTask, updateTask, deleteTask, toggleTaskCompletion } from '../../services/tasks';
 import TaskList from '../components/TaskList';
 import TaskForm from '../components/TaskForm';
 import ProtectedRoute from '../components/ProtectedRoute';
