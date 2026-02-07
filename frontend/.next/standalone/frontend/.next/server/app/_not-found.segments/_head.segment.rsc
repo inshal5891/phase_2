@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[64381,["/_next/static/chunks/dc5d02f801ca38a0.js","/_next/static/chunks/20507c42a43216ac.js","/_next/static/chunks/4e23ab0c08513715.js"],"ViewportBoundary"]
+3:I[64381,["/_next/static/chunks/dc5d02f801ca38a0.js","/_next/static/chunks/20507c42a43216ac.js","/_next/static/chunks/4e23ab0c08513715.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"rePrP--_oN5z7tGPw_JpL","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Todo App"}],["$","meta","1",{"name":"description","content":"A secure todo application with authentication"}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

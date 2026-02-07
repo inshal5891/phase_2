@@ -121,7 +121,12 @@
       "Bash(__NEW_LINE_57659513a8fb7125__ echo \"\")",
       "Bash(__NEW_LINE_9cd3b942ab397e9f__ echo \"\")",
       "Bash(git add frontend/src/services/)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: resolve Next.js routing conflict by moving API utilities to services directory\n\nMoved frontend/src/app/api/{auth,tasks}.ts to frontend/src/services/ to prevent\nNext.js App Router from intercepting /api/* requests. Updated all import paths\nacross login, signup, tasks pages and AuthContext.\n\nThis fixes the 404 and Network Error issues where frontend requests to\nhttp://localhost:8001/api/auth/login were being intercepted by Next.js\nrouting instead of reaching the FastAPI backend.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(npm run build)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)"
     ]
   }
 }
