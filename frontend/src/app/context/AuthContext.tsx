@@ -49,7 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(false);
       return false;
     }
-  };
+  }
 
   const login = (userData: UserData) => {
     setUser(userData);

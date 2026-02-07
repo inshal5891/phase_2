@@ -1,5 +1,5 @@
 import api from '../lib/api';
-import { Task, TaskUpdateRequest } from '../../../shared/types';
+import { Task, TaskUpdateRequest } from '../types';
 
 /**
  * Fetch all tasks for the authenticated user
